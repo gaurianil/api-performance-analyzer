@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-performance-analyzer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-performance-analyzer
+  template:
+    metadata:
+      labels:
+        app: api-performance-analyzer
+    spec:
+      containers:
+      - name: api-performance-analyzer
+        image: gaurianil/api-performance-analyzer:latest
+        ports:
+        - containerPort: 3000
