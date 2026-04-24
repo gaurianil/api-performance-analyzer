@@ -8,7 +8,7 @@ app.use(cors());
 
 // Check server
 app.get("/", (req, res) => {
-    res.send("API Performance Analyzer is running");
+    res.send("API Performance Analyzer v2 running");
 });
 
 // Main logic
