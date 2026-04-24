@@ -3,51 +3,56 @@ const axios = require("axios");
 const cors = require("cors");
 
 const app = express();
-app.use(express.json());
+
 app.use(cors());
+app.use(express.json());
 
-// Check server
+// Root endpoint (for browser check)
 app.get("/", (req, res) => {
-    res.send("API Performance Analyzer v2 running");
+  res.send("API Performance Analyzer v2 running");
 });
 
-// Main logic
+// Analyze endpoint
 app.post("/analyze", async (req, res) => {
-    const { url, count } = req.body;
+  const { url, count } = req.body;
 
-    if (!url || !count) {
-        return res.status(400).json({
-            error: "Please provide both 'url' and 'count'"
-        });
-    }
-
-    let success = 0;
-    let fail = 0;
-    let totalTime = 0;
-
-    for (let i = 0; i < count; i++) {
-        const start = Date.now();
-
-        try {
-            await axios.get(url);
-            const end = Date.now();
-            totalTime += (end - start);
-            success++;
-        } catch (error) {
-            fail++;
-        }
-    }
-
-    const averageTime = success > 0 ? totalTime / success : 0;
-
-    res.json({
-        totalRequests: count,
-        success,
-        fail,
-        averageTime: `${averageTime} ms`
+  if (!url || !count) {
+    return res.status(400).json({
+      error: "Please provide 'url' and 'count'",
     });
+  }
+
+  let success = 0;
+  let fail = 0;
+  let totalTime = 0;
+
+  for (let i = 0; i < count; i++) {
+    const start = Date.now();
+
+    try {
+      await axios.get(url);
+      success++;
+    } catch (err) {
+      fail++;
+    }
+
+    const end = Date.now();
+    totalTime += end - start;
+  }
+
+  const averageTime = (totalTime / count).toFixed(2) + " ms";
+
+  res.json({
+    totalRequests: count,
+    success,
+    fail,
+    averageTime,
+  });
 });
 
-app.listen(3000, () => {
-    console.log("Server running on http://localhost:3000");
+// IMPORTANT: Dynamic port for deployment
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
