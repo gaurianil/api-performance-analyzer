@@ -7,50 +7,108 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Root endpoint (for browser check)
+/*
+====================================================
+ HEALTH CHECK
+====================================================
+*/
 app.get("/", (req, res) => {
-  res.send("API Performance Analyzer v2 running");
+  res.json({
+    status: "API Stress Tester running",
+    version: "2.0",
+  });
 });
 
-// Analyze endpoint
+/*
+====================================================
+ STRESS TEST ENGINE (UPGRADED)
+====================================================
+*/
 app.post("/analyze", async (req, res) => {
-  const { url, count } = req.body;
+  const {
+    url,
+    count = 50,
+    concurrency = 10,
+    method = "GET",
+  } = req.body;
 
-  if (!url || !count) {
+  if (!url) {
     return res.status(400).json({
-      error: "Please provide 'url' and 'count'",
+      error: "URL is required",
     });
   }
 
+  const safeCount = Math.min(count, 1000);
+  const safeConcurrency = Math.min(concurrency, 50);
+
   let success = 0;
   let fail = 0;
-  let totalTime = 0;
+  let times = [];
 
-  for (let i = 0; i < count; i++) {
+  const tasks = Array.from({ length: safeCount });
+
+  async function sendRequest() {
     const start = Date.now();
 
     try {
-      await axios.get(url);
+      await axios({
+        method,
+        url,
+        timeout: 5000,
+      });
+
       success++;
     } catch (err) {
       fail++;
     }
 
-    const end = Date.now();
-    totalTime += end - start;
+    times.push(Date.now() - start);
   }
 
-  const averageTime = (totalTime / count).toFixed(2) + " ms";
+  async function worker() {
+    while (tasks.length > 0) {
+      tasks.pop();
+      await sendRequest();
+    }
+  }
+
+  const workers = Array.from(
+    { length: safeConcurrency },
+    worker
+  );
+
+  await Promise.all(workers);
+
+  const total = times.length;
+
+  const avg =
+    times.reduce((a, b) => a + b, 0) / total;
+
+  const min = Math.min(...times);
+  const max = Math.max(...times);
+
+  const successRate = ((success / total) * 100).toFixed(2);
+
+  const failRate = ((fail / total) * 100).toFixed(2);
 
   res.json({
-    totalRequests: count,
+    totalRequests: total,
     success,
     fail,
-    averageTime,
+    successRate: successRate + "%",
+    failRate: failRate + "%",
+    avgResponseTime: avg.toFixed(2) + " ms",
+    minResponseTime: min + " ms",
+    maxResponseTime: max + " ms",
+    throughput: (total / (avg / 1000)).toFixed(2) + " req/sec",
   });
 });
 
-// IMPORTANT: Dynamic port for deployment
+/*
+====================================================
+ SERVER START
+====================================================
+*/
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
