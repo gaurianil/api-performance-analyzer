@@ -99,7 +99,7 @@ export default function App() {
 
             <div className="metric">
               <div className="metric-title">Avg Time</div>
-              <div className="metric-value">{result.averageTime}</div>
+              <div className="metric-value">{result.avgResponseTime}</div>
             </div>
 
             <div className="metric">
