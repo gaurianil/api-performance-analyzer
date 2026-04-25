@@ -8,7 +8,7 @@ WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm install
 
-COPY frontend/ .
+COPY frontend/ ./
 RUN npm run build
 
 
@@ -19,13 +19,15 @@ FROM node:18
 
 WORKDIR /app
 
+# install backend deps
 COPY package*.json ./
 RUN npm install
 
+# copy backend source
 COPY . .
 
-# copy built frontend into backend
-COPY --from=frontend /app/frontend/dist ./dist
+# copy frontend build output
+COPY --from=frontend /app/frontend/dist /app/dist
 
 EXPOSE 3000
 
