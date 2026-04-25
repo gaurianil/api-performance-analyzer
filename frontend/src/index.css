@@ -1,0 +1,257 @@
+/* =========================
+   MODERN DARK SaaS (GRAY LUXURY)
+========================= */
+
+:root {
+  /* =========================
+     COLOR SYSTEM
+  ========================= */
+
+  --bg: #0a0b0f;
+  --bg-soft: #0e1016;
+
+  --surface: #12141a;
+  --surface-2: #171a22;
+  --surface-3: #1c202a;
+
+  --border: rgba(255, 255, 255, 0.06);
+  --border-strong: rgba(255, 255, 255, 0.12);
+
+  --text: #cfd3dc;
+  --text-muted: #8a92a3;
+  --text-strong: #f3f4f6;
+
+  /* neutral accent (NO gold, no color noise) */
+  --accent: #9ca3af;
+  --accent-soft: rgba(156, 163, 175, 0.12);
+
+  --success: #22c55e;
+  --danger: #ef4444;
+  --warn: #f59e0b;
+
+  --shadow:
+    0 30px 80px rgba(0, 0, 0, 0.65),
+    0 10px 20px rgba(0, 0, 0, 0.35);
+
+  --radius: 16px;
+
+  /* =========================
+     TYPOGRAPHY
+  ========================= */
+
+  --font: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.6;
+
+  color: var(--text);
+  background:
+    radial-gradient(circle at top, #141821, var(--bg) 60%);
+
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* =========================
+   RESET
+========================= */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+/* =========================
+   APP WRAPPER
+========================= */
+
+#root {
+  min-height: 100vh;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  padding: 48px 20px;
+
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+
+/* =========================
+   HEADINGS
+========================= */
+
+h1 {
+  font-size: 42px;
+  font-weight: 300;
+  letter-spacing: -1px;
+  color: var(--text-strong);
+  margin-bottom: 10px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-strong);
+}
+
+/* =========================
+   TEXT
+========================= */
+
+p {
+  color: var(--text-muted);
+  margin: 0;
+}
+
+small {
+  color: var(--text-muted);
+}
+
+/* =========================
+   INPUTS (CLEAN SAAS STYLE)
+========================= */
+
+input {
+  width: 100%;
+  padding: 12px 14px;
+
+  border-radius: 12px;
+  border: 1px solid var(--border);
+
+  background: var(--surface);
+  color: var(--text);
+
+  outline: none;
+
+  transition: 0.2s ease;
+}
+
+input:focus {
+  border-color: var(--border-strong);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+/* =========================
+   BUTTONS (MINIMAL PREMIUM)
+========================= */
+
+button {
+  width: 100%;
+  padding: 12px 14px;
+
+  border-radius: 12px;
+  border: 1px solid var(--border);
+
+  background: var(--surface-2);
+  color: var(--text-strong);
+
+  font-weight: 500;
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+button:hover {
+  background: var(--surface-3);
+  transform: translateY(-1px);
+}
+
+/* primary action */
+button.primary {
+  background: var(--text-strong);
+  color: #0a0b0f;
+  border: none;
+}
+
+/* =========================
+   CARD SYSTEM (IMPORTANT)
+========================= */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+
+  padding: 22px;
+
+  box-shadow: var(--shadow);
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* =========================
+   METRICS (DASHBOARD STYLE)
+========================= */
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.metric {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+
+  padding: 14px;
+}
+
+.metric-title {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.metric-value {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text-strong);
+  margin-top: 4px;
+}
+
+/* =========================
+   STATUS COLORS (SUBTLE)
+========================= */
+
+.good { color: var(--success); }
+.bad { color: var(--danger); }
+.warn { color: var(--warn); }
+
+/* =========================
+   UTILITIES
+========================= */
+
+hr {
+  border: none;
+  height: 1px;
+  background: var(--border);
+  margin: 20px 0;
+}
+
+.glow {
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.04);
+}
+.app-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+label {
+  font-size: 13px;
+  color: var(--text-muted);
+}
