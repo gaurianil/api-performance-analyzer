@@ -1,29 +1,29 @@
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
+const path = require("path");
 
 const app = express();
 
+/* =========================
+   MIDDLEWARE
+========================= */
 app.use(cors());
 app.use(express.json());
 
-/*
-====================================================
- HEALTH CHECK
-====================================================
-*/
-app.get("/", (req, res) => {
+/* =========================
+   HEALTH CHECK (API ONLY)
+========================= */
+app.get("/health", (req, res) => {
   res.json({
-    status: "API Stress Tester running",
+    status: "OK",
     version: "2.0",
   });
 });
 
-/*
-====================================================
- STRESS TEST ENGINE (UPGRADED)
-====================================================
-*/
+/* =========================
+   STRESS TEST ENGINE
+========================= */
 app.post("/analyze", async (req, res) => {
   const {
     url,
@@ -38,8 +38,8 @@ app.post("/analyze", async (req, res) => {
     });
   }
 
-  const safeCount = Math.min(count, 1000);
-  const safeConcurrency = Math.min(concurrency, 50);
+  const safeCount = Math.min(Number(count), 1000);
+  const safeConcurrency = Math.min(Number(concurrency), 50);
 
   let success = 0;
   let fail = 0;
@@ -56,7 +56,6 @@ app.post("/analyze", async (req, res) => {
         url,
         timeout: 5000,
       });
-
       success++;
     } catch (err) {
       fail++;
@@ -79,36 +78,39 @@ app.post("/analyze", async (req, res) => {
 
   await Promise.all(workers);
 
-  const total = times.length;
+  const total = success + fail;
 
   const avg =
-    times.reduce((a, b) => a + b, 0) / total;
+    times.reduce((a, b) => a + b, 0) / (times.length || 1);
 
   const min = Math.min(...times);
   const max = Math.max(...times);
-
-  const successRate = ((success / total) * 100).toFixed(2);
-
-  const failRate = ((fail / total) * 100).toFixed(2);
 
   res.json({
     totalRequests: total,
     success,
     fail,
-    successRate: successRate + "%",
-    failRate: failRate + "%",
+    successRate: ((success / total) * 100).toFixed(2) + "%",
+    failRate: ((fail / total) * 100).toFixed(2) + "%",
     avgResponseTime: avg.toFixed(2) + " ms",
-    minResponseTime: min + " ms",
-    maxResponseTime: max + " ms",
-    throughput: (total / (avg / 1000)).toFixed(2) + " req/sec",
+    minResponseTime: min || 0 + " ms",
+    maxResponseTime: max || 0 + " ms",
+    throughput: (total / (avg / 1000 || 1)).toFixed(2) + " req/sec",
   });
 });
 
-/*
-====================================================
- SERVER START
-====================================================
-*/
+/* =========================
+   SERVE FRONTEND (REACT BUILD)
+========================= */
+app.use(express.static(path.join(__dirname, "dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
+});
+
+/* =========================
+   START SERVER
+========================= */
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
